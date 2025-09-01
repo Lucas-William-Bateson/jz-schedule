@@ -5,26 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>JavaZone Schedule — My Picks</title>
     <meta name="description" content="Personal JavaZone schedule: selected talks and lightning talks, mobile-first view." />
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" content="#15110d" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
   </head>
   <body>
-    <header class="site-header">
-      <h1>JavaZone — My Picks</h1>
-      <p class="sub">Mobile-first schedule for sessions I plan to attend.</p>
+    <header class="site-header" data-accent>
+      <div class="header-inner">
+        <div class="brand">
+          <div class="wreath" aria-hidden="true"></div>
+          <h1><span class="brand-small">JavaZone</span> — My Picks</h1>
+        </div>
+        <div class="header-actions">
+          <label class="visually-hidden" for="search">Search</label>
+          <input id="search" class="search" type="search" placeholder="Search talks (title · speaker · tag)" />
+
+          <button class="theme-toggle" id="themeToggle" aria-pressed="false" title="Toggle theme">
+            <span class="sun">☀️</span>
+            <span class="moon">🌙</span>
+          </button>
+        </div>
+      </div>
     </header>
 
     <main class="container" id="top">
       <nav class="day-nav" aria-label="Days">
-        <a href="#wednesday" class="day-link">Wednesday</a>
-        <a href="#thursday" class="day-link">Thursday</a>
+        <a href="#wednesday" class="day-link" data-day="I"><span class="roman">I</span> Wednesday</a>
+        <a href="#thursday" class="day-link" data-day="II"><span class="roman">II</span> Thursday</a>
       </nav>
 
       <section id="wednesday" class="day">
-        <h2>Wednesday</h2>
+        <h2><span class="roman">I</span> Wednesday</h2>
 
         <article class="session">
           <header>
@@ -195,7 +209,7 @@
       </section>
 
       <section id="thursday" class="day">
-        <h2>Thursday</h2>
+        <h2><span class="roman">II</span> Thursday</h2>
 
         <article class="session">
           <header>
@@ -219,10 +233,8 @@
 
       <footer class="site-footer">
         <a href="#top" class="back-to-top">Back to top ↑</a>
-        <p>Built as a fast, static site. No framework needed.</p>
       </footer>
     </main>
   </body>
   
 </html>
-
