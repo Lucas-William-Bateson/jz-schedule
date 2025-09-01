@@ -8,7 +8,7 @@ LABEL version="${VERSION:-1.0.0}"
 LABEL description="Mini deploy template application"
 
 # Install necessary packages and create non-root user
-RUN apk add --no-cache wget curl && \
+RUN apk add --no-cache wget curl darkhttpd && \
     addgroup -g 1001 -S appgroup && \
     adduser -S appuser -u 1001 -G appgroup
 
@@ -30,6 +30,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD wget --quiet --tries=1 --spider http://localhost:${APP_PORT:-8000} || exit 1
 
 # Default command
-# Serve static site via BusyBox httpd (included in Alpine)
+# Serve static site via darkhttpd (lightweight static server)
 CMD ["sh", "-c", \
-     "/bin/busybox httpd -f -p ${APP_PORT:-8000} -h /app/site"]
+     "exec darkhttpd /app/site --port ${APP_PORT:-8000}"]
