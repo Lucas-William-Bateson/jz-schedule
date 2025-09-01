@@ -32,4 +32,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # Default command
 # Serve static site via darkhttpd (lightweight static server)
 CMD ["sh", "-c", \
-     "exec darkhttpd /app/site --port ${APP_PORT:-8000}"]
+     "exec darkhttpd /app/site --port ${APP_PORT:-8000} --index index.html --log /dev/stdout"]
