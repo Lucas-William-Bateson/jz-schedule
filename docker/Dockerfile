@@ -1,35 +1,28 @@
-# Multi-stage build for production optimization
-FROM alpine:3.21.3 AS base
+# Static site served by nginx
+FROM nginx:1.27-alpine
 
 # Add metadata labels
 LABEL maintainer="${MAINTAINER_EMAIL:-your-email@example.com}"
 LABEL project="${APP_NAME:-myproject}"
 LABEL version="${VERSION:-1.0.0}"
-LABEL description="Mini deploy template application"
+LABEL description="JavaZone schedule static site"
 
-# Install necessary packages and create non-root user
-RUN apk add --no-cache wget curl darkhttpd && \
-    addgroup -g 1001 -S appgroup && \
-    adduser -S appuser -u 1001 -G appgroup
+# Install curl for health checks (alpine variant)
+RUN apk add --no-cache curl
 
-# Set working directory and change ownership to non-root user
-WORKDIR /app
+# Copy static site to nginx html directory
+COPY site /usr/share/nginx/html
 
-# Copy static site and set ownership
-COPY --chown=appuser:appgroup site /app/site
-RUN chown -R appuser:appgroup /app
+# Route nginx logs to container stdout/stderr for `docker logs`
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+ && ln -sf /dev/stderr /var/log/nginx/error.log
 
-# Switch to non-root user
-USER appuser
+# Expose standard HTTP port inside container
+EXPOSE 80
 
-# Expose port
-EXPOSE ${APP_PORT:-8000}
-
-# Add health check
+# Container-level health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:${APP_PORT:-8000} || exit 1
+    CMD curl -fsS http://localhost/health || exit 1
 
-# Default command
-# Serve static site via darkhttpd (lightweight static server)
-CMD ["sh", "-c", \
-     "exec darkhttpd /app/site --port ${APP_PORT:-8000} --index index.html --log /dev/stdout"]
+# Run nginx in foreground
+CMD ["nginx", "-g", "daemon off;"]
