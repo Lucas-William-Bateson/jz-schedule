@@ -14,10 +14,10 @@ RUN apk add --no-cache wget curl && \
 
 # Set working directory and change ownership to non-root user
 WORKDIR /app
-RUN chown -R appuser:appgroup /app
 
-# Copy application files (if any)
-# COPY . /app
+# Copy static site and set ownership
+COPY --chown=appuser:appgroup site /app/site
+RUN chown -R appuser:appgroup /app
 
 # Switch to non-root user
 USER appuser
@@ -30,10 +30,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD wget --quiet --tries=1 --spider http://localhost:${APP_PORT:-8000} || exit 1
 
 # Default command
-CMD ["sh", "-c", "echo 'Application starting on port ${APP_PORT:-8000}...' && \
-     echo 'This is a test Docker container for ${APP_NAME:-myproject}' && \
-     echo 'Container is healthy and running' && \
-     while true; do \
-       echo 'Service is running...' && \
-       sleep 30; \
-     done"]
+# Serve static site via BusyBox httpd (included in Alpine)
+CMD ["sh", "-c", \
+     "/bin/busybox httpd -f -p ${APP_PORT:-8000} -h /app/site"]
